@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Test form</title>
+</head>
+<body>
+	{% if name == "" %}
+	<form method="post">
+		<input type="text" name="user">
+		<input type="submit" name="send" value="sendout">
+	</form>
+	{% else %}
+	<p>Hello,{{name}}</p>
+	{% endif %}
+</body>
+</html>

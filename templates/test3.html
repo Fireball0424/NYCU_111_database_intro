@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Final Project</title>
+</head>
+    
+    <script src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
+    <script type=text/javascript>
+        $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    </script>
+
+    <div class="form-group">
+        <label for="theName">Name:</label>
+        <input type="text" class="form-control" id="theName" >
+    </div>
+    <div class="form-group">
+        <label for="thefood">Food:</label>
+        <input type="text" class="form-control" id="thefood">
+    </div>
+        <button id='testBTN' type='button'>testButton</button>     
+
+    <script>
+        $('#testBTN').click(
+            function() {
+            var form_data = new FormData();
+            form_data.append('theName', $("#theName").val());
+            form_data.append('thefood', $("#thefood").val());
+            // form_data.append('xxx', $("#xxx").text());
+            //附帶text也是可以的
+            $.ajax({
+                type: "POST",
+                url: $SCRIPT_ROOT + "/route_function",
+                data: form_data,
+                success: (data) => {
+                    console.log(data.validate);
+
+                    alert(data.validate)
+                    alert(data.Rtnfood)
+                    //也可以用jquery來呈現結果
+                },
+                contentType: false,
+                processData: false,
+                dataType: "json"
+            });
+        });
+
+    </script>
+</body>
+</html>
