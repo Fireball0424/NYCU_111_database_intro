@@ -11,3 +11,7 @@ Using R to filter distinct skills in skill_database
 Contains all distinct skills in skill database 
 use to autocomplete the user input on the website 
 
+## app.py 
+Flask 
+
+## final.html 
