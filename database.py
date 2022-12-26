@@ -45,35 +45,70 @@ class Database:
                 ex)
 
     def GetMatchingJobTitle(self):
+        result = []
         select_statement = '''select distinct job_title from skills_db as s natural join salary_db order by job_title asc'''
-        result = self.db.execute(select_statement).fetchall()
+        temp = self.db.execute(select_statement).fetchall()
+        for row in temp:
+            result.append(dict(row))
         return result
     
     def GetJobWithTitle(self, job):
+        result = []
         select_statement = '''select * from salary_db where job_title = '{0}' order by monthly_salary asc'''.format(job)
-        result = self.db.execute(select_statement).fetchall()
+        temp = self.db.execute(select_statement).fetchall()
+        for row in temp:
+            result.append(dict(row))
         return result
     
     def GetJobWithCompany(self, company):
+        result = []
         select_statement = '''select * from salary_db where company_name = '{0}' order by monthly_salary asc'''.format(company)
-        result = self.db.execute(select_statement).fetchall()
+        temp = self.db.execute(select_statement).fetchall()
+        for row in temp:
+            result.append(dict(row))
         return result
 
     def GetJobWithSalary(self, salary):
+        result = []
         select_statement = '''select * from salary_db where monthly_salary = {0} order by monthly_salary asc'''.format(salary)
-        result = self.db.execute(select_statement).fetchall()
+        temp = self.db.execute(select_statement).fetchall()
+        for row in temp:
+            result.append(dict(row))
         return result
 
     def GetJobWithLocation(self, locale):
+        result = []
         select_statement = '''select * from salary_db where location = '{0}' order by monthly_salary asc'''.format(locale)
-        result = self.db.execute(select_statement).fetchall()
+        temp = self.db.execute(select_statement).fetchall()
+        for row in temp:
+            result.append(dict(row))
         return result
 
-
-        
-
-database = Database()
-temp = database.GetJobWithCompany('Wibmo')
-print(temp)
+    def GetJobWithOneMatchingSkill(self, skill):
+        result = []
+        select_statement = '''select distinct job_title from skills_db where skill = '{0}' order by job_title asc'''.format(skill)
+        print(select_statement)
+        temp = self.db.execute(select_statement).fetchall()
+        for row in temp:
+            result.append(dict(row))
+        return result
+    
+    def GetJobWithMultipleSkills(self, json):
+        params = "("
+        skills = []
+        result = []
+        for key, val in json.items():
+            print('val: ', val)
+            skills.append(val)
+        for index, words in enumerate(skills):
+            if index != len(skills) - 1:
+                params = params + "'{0}', ".format(words)
+            else:
+                params = params + "'{0}')".format(words)
+        select_statement = '''select * from (select distinct job_title from skills_db where skill in {0}) as j natural join salary_db order by monthly_salary desc limit 10'''.format(params)
+        temp = self.db.execute(select_statement).fetchall()
+        for row in temp:
+            result.append(dict(row))
+        return result
 
 
