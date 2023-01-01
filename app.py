@@ -18,7 +18,7 @@ def index():
 @app.route('/route_function', methods=['POST'])
 def foo():
     json = request.json
-    result = database.GetJobWithMultipleSkills(json)
+    result = database.GetJobWithMultipleSkillsProMax(json)
     print('Query Result: ', result)
     print('recv:', json)
     return json
