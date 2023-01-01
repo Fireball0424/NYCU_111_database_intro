@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Final Project</title>
+</head>
+
+<!--library-->
+<link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.9.1.js"></script>
+<script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+<link rel="stylesheet" href="http://jqueryui.com/resources/demos/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/0.71/jquery.csv-0.71.min.js"></script>
+
+<!--Autocomplete skills input-->
+<script>
+$(function() {
+    // Storage for lists of CSV Data
+    var lists = [];
+
+    //Get the CSV Content
+    $.get("https://raw.githubusercontent.com/Fireball0424/NYCU_111_database_intro/main/all_skills.csv", function(data) {
+        var record_num = 1;
+        var allTextLines = data.split(/\r\n|\n/);
+        var headings = allTextLines.shift().split(',');
+        while (allTextLines.length > 0) {
+            entry = allTextLines.shift().split(',');
+            lists.push(entry[0].slice(1, -1));
+        }
+    });  
+    $("#skills").autocomplete({
+        source: lists
+    });
+}); 
+</script>
+
+<!--Json file-->
+<script>  
+var skill_form_data = new FormData();
+var all_json = new FormData();
+var cnt_skill = 0;
+
+function Add_skill_to_list(){
+    var input_skill = document.getElementById('skills');
+    
+    // update display textarea
+    $('#skill_list_text').append('<br>');
+    $('#skill_list_text').append(input_skill.value);
+
+    //update json data
+    cnt_skill = cnt_skill + 1;
+    var key = 'skill_' + cnt_skill.toString(10);
+    skill_form_data.append(key, input_skill.value);
+
+    //clean the input area
+    input_skill.value = '';
+}
+
+var location_list = ['New Delhi', 'Bangalore', 'Pune', 'Chennai', 'Kolkata',
+                        'Mumbai', 'Hyderabad', 'Madhya Pradesh', 'Kerala', 'Jaipur'];
+                        
+function Add_location_to_list(){
+    for(var i = 1; i <= 10; i = i + 1){
+        var id_name = 'l' + i.toString(10);
+        var x = document.getElementById(id_name);
+        var key = 'location_' + i.toString(10);
+        if(x.checked == true){
+            all_json.append(key, true);
+        }else{
+            all_json.append(key, false);
+        }
+    }
+}
+
+// Send json file to flask
+function Send_json_file(){
+    all_json.append('Min', document.getElementById('salaryMin').value);
+    all_json.append('Max', document.getElementById('salaryMax').value);
+    
+    Add_location_to_list();
+    
+    for(var pair of skill_form_data.entries()){
+        all_json.append(pair[0], pair[1]);
+    }
+
+    $.ajax({
+        type: "POST",
+        url: "/route_function",
+        data: JSON.stringify(Object.fromEntries(all_json)),
+        success: (data) => {
+            console.log(data);
+        },
+        contentType: 'application/json',
+        processData: false,
+        dataType: "json"
+    });
+}
+</script> 
+
+<body>
+    <style>
+        html{
+            height: 100%;
+            margin: 0;
+        }
+        header{
+            width: 100%;
+            background-color: #6DBAA1;
+            color: black;
+            font-size: 36px;
+            padding: 5px;
+            text-align: center;
+        }
+        #inputDiv1, #inputDiv2, #inputDiv3{
+            width:32%;
+            height: 280px;
+            line-height:20px;
+            padding:2px;
+            border:5px #435FE5 solid;
+            margin: 0.2%;
+            float: left;
+            text-align: center;
+            font-size: 100%;
+        }
+        #wrap1{
+            display: flex;
+            justify-content: space-around;
+        }
+        #skillList{
+            width:20%;
+            height: 65%;
+            border: 5px #435FE5 solid;
+            margin:0.2%;
+            text-align: center;
+        }
+        body{
+            background-color: #F1EDFF;
+            display: flex;
+            flex-direction: column;
+        }
+        #page-container{
+            position:relative;
+            min-height: 100vh;
+        }
+        #content-wrap{
+            padding-bottom: 2.5rem;
+        }
+        footer{
+            background-color: #6DBAA1;
+            color: black;
+            width:100%;
+            padding: 5px;
+            font-size: 18px;
+            text-align: center;
+            height: 2.5rem;
+            position: absolute;
+        }
+        
+    </style>
+    <div class="content">
+        {% block content %} {% endblock %}
+    </div>
+    
+</body>
+
+</html>
