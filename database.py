@@ -41,8 +41,7 @@ class Database:
 
         except Exception as ex:
             print(
-                "Connection could not be made due to the following error: \n",
-                ex)
+                "Connection could not be made due to the following error: \n", ex)
 
     def GetMatchingJobTitle(self):
         result = []
@@ -87,7 +86,7 @@ class Database:
     def GetJobWithOneMatchingSkill(self, skill):
         result = []
         select_statement = '''select distinct job_title from skills_db where skill = '{0}' order by job_title asc'''.format(skill)
-        print(select_statement)
+        #print(select_statement)
         temp = self.db.execute(select_statement).fetchall()
         for row in temp:
             result.append(dict(row))
@@ -98,7 +97,7 @@ class Database:
         skills = []
         result = []
         for key, val in json.items():
-            print('val: ', val)
+            #print('val: ', val)
             skills.append(val)
         for index, words in enumerate(skills):
             if index != len(skills) - 1:
@@ -106,6 +105,44 @@ class Database:
             else:
                 params = params + "'{0}')".format(words)
         select_statement = '''select * from (select distinct job_title from skills_db where skill in {0}) as j natural join salary_db order by monthly_salary desc limit 10'''.format(params)
+        temp = self.db.execute(select_statement).fetchall()
+        for row in temp:
+            result.append(dict(row))
+        return result
+
+    def GetJobWithMultipleSkillsProMax(self, json):
+        skills_params = "("
+        location_params = "("
+        skills = []
+        location = []
+        salary = []
+        result = []
+        point = 0
+        locations = {"2" : "New Delhi", "3" : "Bangalore", "4" : "pune", "5" : "Chennai" , "6" : "Kolkata", "7" : "Mumbai", "8" : "Hyperabad", "9" : "Madhya Pradesh", "10" : "Kerala", "11" : "Jaipur"}
+
+        for key, value in json.items():
+            if point <= 1:
+                salary.append(value)
+            elif 1 < point <= 11:
+                if value == "true":
+                    location.append(locations["{0}".format(point)])
+            elif point > 11:
+                skills.append(value)
+            point += 1
+
+        for index, words in enumerate(location):
+            if index != len(location) - 1:
+                location_params = location_params + "'{0}', ".format(words)
+            else:
+                location_params = location_params + "'{0}')".format(words)
+
+        for index, words in enumerate(skills):
+            if index != len(skills) - 1:
+                skills_params = skills_params + "'{0}', ".format(words)
+            else:
+                skills_params = skills_params + "'{0}')".format(words)
+        
+        select_statement = '''select * from (select distinct job_title from skills_db where skill in {0}) as j natural join salary_db where location in {1} and monthly_salary >= {2} and monthly_salary <= {3} order by monthly_salary asc'''.format(skills_params, location_params, salary[0], salary[1])
         temp = self.db.execute(select_statement).fetchall()
         for row in temp:
             result.append(dict(row))
