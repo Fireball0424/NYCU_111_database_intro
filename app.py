@@ -6,9 +6,11 @@ from flask import request
 from flask import jsonify
 
 from database import Database
+from plot import Plot
 
 app = Flask(__name__)
 database = Database()
+plot = Plot()
 
 
 @app.route('/')
@@ -21,7 +23,11 @@ def success():
     if request.method == 'POST' : 
         json_file = request.json
         result = database.GetJobWithMultipleSkillsProMax(json_file)
-
+        
+        plot.drawJobTitle(data=result)
+        res = plot.drawLocation(data=result)
+        print(res)
+        print(type(res))
         return render_template('res2.html', value=result)
 
     else :
