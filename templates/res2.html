@@ -1,0 +1,52 @@
+<div id="output1">
+    <table class="t">
+        <tr>
+            <td> job_title </td> 
+            <td> company_name </td>
+            <td> monthly_salary </td>
+            <td> location </td>
+            <td> salary_id </td>
+        </tr>
+
+
+    {% for x in value %}
+        <tr>
+        {% for k, v in x.items() %}
+            <td>{{v}}</td>
+        {% endfor %}
+        </tr>    
+    {% endfor %}
+    </table>
+</div>
+<div id="output2">
+    <img src="/static/jobTitle.jpg">
+</div>
+<div id="output3">
+    <img src="/static/location.jpg">
+</div>
+
+<style>
+    .t, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+        padding: 4px;
+    }
+    #output1, #output2, #output3{
+        width:90%;
+        height: 500px;
+        line-height:20px;
+        padding:2px;
+        border:5px #435FE5 solid;
+        margin: 0.2%;
+        text-align: center;
+        font-size: 100%;
+    }
+    #output1{
+        overflow-y: scroll;
+    }
+    img{
+        height: 100%;
+        width: 100%;
+        object-fit: contain;
+    }
+</style>
