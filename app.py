@@ -25,9 +25,9 @@ def success():
         result = database.GetJobWithMultipleSkillsProMax(json_file)
         
         plot.drawJobTitle(data=result)
-        res = plot.drawLocation(data=result)
-        print(res)
-        print(type(res))
+        plot.drawLocation(data=result)
+        plot.drawSalary(data=result)
+        
         return render_template('res2.html', value=result)
 
     else :

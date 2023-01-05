@@ -31,8 +31,11 @@ class Plot() :
                 sum_other += y
             value.append(sum_other)
 
+        def func(pct) : 
+            return "{:1.1f}%".format(pct)
+
         fig = plt.figure(figsize =(20, 14))
-        plt.pie(x=value, labels=label)
+        plt.pie(x=value, labels=label,  autopct=lambda pct: func(pct))
         
         plt.savefig('static/jobTitle.jpg')
     
@@ -47,7 +50,28 @@ class Plot() :
         label = list(cnt.keys())
         value = list(cnt.values())
 
+        def func(pct) : 
+            return "{:1.1f}%".format(pct)
+
         fig = plt.figure(figsize =(20, 14))
-        plt.pie(x=value, labels=label)
+        plt.pie(x=value, labels=label, autopct=lambda pct: func(pct))
         
         plt.savefig('static/location.jpg') 
+
+    def drawSalary(self, data):
+        cnt = []
+        for x in data :
+            y = x['monthly_salary']
+            if y > 10000 : 
+                y = 10000
+            cnt.append(y)
+         
+        
+        fig = plt.figure(figsize =(20, 14))
+
+        bins_list = [0,1000,2000,3000,4000,5000,6000,7000,8000,9000,10000]
+        plt.hist(x=cnt, bins=bins_list ,color='cyan', linewidth=1)
+        plt.xticks(bins_list)
+        plt.xlabel('monthly_salary (>10000 set as 10000) ')
+        
+        plt.savefig('static/monthly_salary.jpg') 
